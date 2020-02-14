@@ -1,10 +1,10 @@
-delete database if exists department;
-delete database if exists employee;
-delete database if exists empRole;
+drop database if exists department;
+drop database if exists employee;
+drop database if exists empRole;
 
 create database department;
 
-use database department;
+use department;
 
 create table department (
     id int not null auto_increment,
@@ -14,28 +14,28 @@ create table department (
 
 create database employee;
 
-use database employee;
+use employee;
 
 create table employee (
     id int not null auto_increment,
     firstName varchar(30),
     lastName varchar(30),
+    -- FK
     roleID int,
     -- FK
     managerID int,
-    -- FK
     primary key (id)
 );
 
 create database  empRole;
 
-use database  empRole;
+use  empRole;
 
 create table empRole (
     id int not null auto_increment,
     title varchar(30),
     salary decimal(7,2),
-    departmentID int,
     -- FK
+    departmentID int,
     primary key (id)
 );
