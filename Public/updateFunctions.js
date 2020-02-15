@@ -1,11 +1,14 @@
-function viewDepts() {
-    console.log("'ello guvna!");
-};
+const mysql = require('mysql');
 
-function viewRoles() {
-    console.log("'ello guvna!");
-};
+// function updateRole() {
+//     console.log("'ello guvna!");
+// };
 
-function viewEmps() {
-    console.log("'ello guvna!");
-};
+// function updateManager() {
+//     console.log("'ello guvna!");
+// };
+
+// modeule.exports = {
+//     updateRole: updateRole,
+//     updateManager: updateManager
+// };
