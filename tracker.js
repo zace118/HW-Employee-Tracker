@@ -6,13 +6,8 @@ const connection = mysql.createConnection({
     port: 3306,
     user: 'root',
     password: 'root',
-    database: ''
-})
-
-
-
-
-
+    database: 'tracker_db'
+});
 
 // Using inquirer, be able to ADD departments, roles, employees, VIEW depts, roles, and emps, and UPDATE existing employee roles.
 inquirer
@@ -43,5 +38,44 @@ inquirer
 
     ]).then(function (res) {
         console.log(res.action);
-
+        const answer = res.action;
+        if (answer === 'Add department') {
+            createDept();
+        }
+        else if (answer === 'Add role') {
+            createRole();
+        }
+        else if (answer === 'Add employee') {
+            createEmp();
+        }
+        else if (answer === 'View departments') {
+            viewDepts();
+        }
+        else if (answer === 'View roles') {
+            viewRoles();
+        }
+        else if (answer === 'View all employees') {
+            viewEmps();
+        }
+        else if (answer === 'Update employee role') {
+            updateRole();
+        }
+        else if (answer === 'Update employee maager') {
+            updateManager();
+        }
     })
+
+connection.connect(function (err) {
+    if (err) throw err;
+    console.log(`Connected as id ${connection.threadId}.`);
+    afterConnection();
+})
+
+function afterConnection() {
+    connection.query
+}
+
+
+
+
+

@@ -1,10 +1,8 @@
-drop database if exists department;
-drop database if exists employee;
-drop database if exists empRole;
+drop database if exists tracker_db;
 
-create database department;
+create database tracker_db;
 
-use department;
+use tracker_db;
 
 create table department (
     id int not null auto_increment,
@@ -12,9 +10,6 @@ create table department (
     primary key (id)
 );
 
-create database employee;
-
-use employee;
 
 create table employee (
     id int not null auto_increment,
@@ -27,9 +22,6 @@ create table employee (
     primary key (id)
 );
 
-create database  empRole;
-
-use  empRole;
 
 create table empRole (
     id int not null auto_increment,
