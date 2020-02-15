@@ -6,15 +6,15 @@ use tracker_db;
 
 -- ------------------------------------------------ 
 -- THIS IS GOOD TO GO!!!
-drop table department;
+drop table department; 
 
 create table department (
     id int not null auto_increment,
-    empName varchar(30),
+    deptName varchar(30),
     primary key (id)
 );
 
-insert into department (empName)
+insert into department (deptName)
 values ('Sales'), ('Finance'), ('Legal'), ('Engineering'), ('Kitchen');
 
 select * from department;

@@ -10,6 +10,6 @@ const connection = require('./connection');
 // };
 
 // modeule.exports = {
-//     updateRole: updateRole,
-//     updateManager: updateManager
+//     updateRole,
+//     updateManager
 // };

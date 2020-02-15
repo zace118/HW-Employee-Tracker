@@ -14,7 +14,7 @@ const connection = require('./connection')
 // };
 
 // module.exports = {
-//     createDept: createDept,
-//     createRole: createRole,
-//     createEmp: createEmp
+//     createDept,
+//     createRole,
+//     createEmp
 // };
