@@ -1,4 +1,5 @@
-const mysql = require('mysql');
+// Requiring the connection (config)
+const connection = require('../connection');
 
 // function updateRole() {
 //     console.log("'ello guvna!");

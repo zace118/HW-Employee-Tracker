@@ -1,7 +1,8 @@
-const mysql = require('mysql');
+// Requiring the connection (config)
+const connection = require('../connection');
 
 function viewDepts() {
-    connection.query('SELECT * FROM tracker_db', function (err, res) {
+    connection.query('SELECT * FROM department', function (err, res) {
         if (err) throw err;
         console.log(res);
     })
@@ -16,7 +17,7 @@ function viewEmps() {
 };
 
 module.exports = {
-    viewDepts: viewDepts,
-    viewRoles: viewRoles,
-    viewEmps: viewEmps
+    viewDepts,
+    viewRoles,
+    viewEmps
 };

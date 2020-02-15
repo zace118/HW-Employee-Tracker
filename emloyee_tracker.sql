@@ -48,9 +48,8 @@ create table employee (
     roleID int,
     managerID int,
     primary key (id),
-    -- constraint FK_emp_RoleID foreign key (roleID) references empRole(departmentID),
-    foreign key (roleID) references empRole(departmentID),
-    foreign key (managerID) references empRole(id)
+    foreign key (roleID) references empRole(id),
+    foreign key (managerID) references employee(id)
 );
 
 insert into employee (firstName, lastName, roleID, managerID)

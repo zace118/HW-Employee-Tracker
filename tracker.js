@@ -1,18 +1,12 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
+// Requiring the connection (config)
+const connection = require('./connection')
 // Variables set to function paths
 const createFunctions = require('./Public/createFunctions');
 const updateFunctions = require('./Public/updateFunctions');
 const viewFunctions = require('./Public/viewFunctions');
 
-// Creating the connection
-const connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'root',
-    database: 'tracker_db'
-});
 
 function initialInquirer() {
     // Using inquirer, be able to ADD departments, roles, employees, VIEW depts, roles, and emps, and UPDATE existing employee roles.
@@ -83,10 +77,7 @@ function initialInquirer() {
 
 initialInquirer();
 
-connection.connect(function (err) {
-    if (err) throw err;
-    console.log(`Connected as id ${connection.threadId}.`);
-})
+
 
 
 
