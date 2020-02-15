@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
 // Requiring the connection (config)
-const connection = require('./connection')
+const connection = require('./Public/connection')
 // Variables set to function paths
 const createFunctions = require('./Public/createFunctions');
 const updateFunctions = require('./Public/updateFunctions');

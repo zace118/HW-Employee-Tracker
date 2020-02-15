@@ -1,5 +1,5 @@
 // Requiring the connection (config)
-const connection = require('../connection');
+const connection = require('./connection');
 
 function viewDepts() {
     connection.query('SELECT * FROM department', function (err, res) {
