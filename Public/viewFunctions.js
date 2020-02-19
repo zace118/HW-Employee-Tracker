@@ -11,6 +11,8 @@ function viewDepts() {
     connection.end();
 };
 
+
+
 function viewRoles() {
     connection.query('SELECT * FROM empRole', function (err, res) {
         if (err) throw err;
@@ -22,6 +24,8 @@ function viewRoles() {
     connection.end();
 };
 
+
+
 function viewEmps() {
     connection.query('SELECT * FROM employee', function (err, res) {
         if (err) throw err;
@@ -32,6 +36,8 @@ function viewEmps() {
     })
     connection.end();
 };
+
+
 
 module.exports = {
     viewDepts,

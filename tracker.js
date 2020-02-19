@@ -8,7 +8,7 @@ const viewFunctions = require('./Public/viewFunctions');
 const updateFunctions = require('./Public/updateFunctions');
 
 
-function initialInquirer() {
+function tracker() {
     // Using inquirer, be able to ADD departments, roles, employees, VIEW depts, roles, and emps, and UPDATE existing employee roles.
     inquirer
         .prompt([
@@ -33,7 +33,10 @@ function initialInquirer() {
             console.log(answer);
             switch (answer) {
                 case 'Add department':
-                    createFunctions.createDept();
+                    if (createFunctions.createDept()) {
+                        tracker();
+                        // console.log("farts");
+                    }
                     break;
 
                 case 'Add role':
@@ -67,4 +70,6 @@ function initialInquirer() {
         })
 }
 
-initialInquirer();
+tracker();
+
+module.exports = tracker;
