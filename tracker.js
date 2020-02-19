@@ -30,13 +30,13 @@ function tracker() {
 
         ]).then(function (res) {
             const answer = res.action;
-            console.log(answer);
+            // console.log(answer);
             switch (answer) {
                 case 'Add department':
                     if (createFunctions.createDept()) {
                         tracker();
-                        // console.log("farts");
                     }
+                    // createFunctions.createDept();
                     break;
 
                 case 'Add role':

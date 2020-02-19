@@ -15,6 +15,7 @@ function createDept() {
             }
         ]).then(function (response) {
             console.log(response.newDeptName);
+            console.log('farts')
             console.log('Inserting a new department...\n')
             connection.query(
                 `INSERT INTO department (deptName) VALUES ('${response.newDeptName}')`,
@@ -23,16 +24,16 @@ function createDept() {
                     console.log(`New department "${response.newDeptName}" added successfully!`);
                 }
             )
-            // It's working, just unable to get it to start the tracker function again.
 
-            // connection.end();
-            tracker.tracker();
+
+            // It's working, just unable to get it to start the tracker function again.
+            connection.end();
+            // tracker.tracker();
             // return true;
 
         })
 
 };
-console.log(createDept());
 
 
 
