@@ -4,7 +4,7 @@ const tracker = require('../tracker')
 // Requiring the connection (config)
 const connection = require('./connection')
 
-
+// It's working, just unable to get it to start the tracker function again.
 function createDept() {
     inquirer
         .prompt([
@@ -36,52 +36,60 @@ function createDept() {
 };
 
 
-// This is breaking after getting past the first question. 
+// This is breaking after getting past the first question. res.deptID isn't a thing???
 function createRole() {
     let deptListNames;
     let deptListIDs;
 
     connection.query('SELECT * FROM department', function (err, res) {
         if (err) throw err;
+        // res is working correctly
+        // console.log(res);
         for (let i = 0; i < res.length; i++) {
+            console.log("RES[I]: " + res[i]);
             deptListNames = (res[i].deptName);
             deptListIDs = (res[i].deptID);
+            // console.log(deptListNames);
+            // console.log(deptListIDs);
         }
     })
+    // console.log(deptListNames);
 
-    inquirer
-        .prompt([
-            {
-                type: 'input',
-                message: 'What is the name of the role you want to add?',
-                name: 'newRoleTitle'
-            },
-            {
-                type: 'list',
-                message: 'What department will this role fall into?',
-                name: 'newRoleDept',
-                choices: [
-                    deptListNames
-                ]
-            },
-            {
-                type: 'number',
-                message: 'What is the salary for this role?',
-                name: 'newRoleSalary'
-            }
-        ]).then(function (res) {
-            console.log(res);
-            // Now, using magic and mysql, create a new department?
-            // ----------------------------------------------------
-            // INSERT INTO empRole(title, salary, departmentID)
-            // VALUES (`${res.newDeptName}, ${res.newRoleSalary}, ${res.newRoleDept}`)
-            // console.log('New role added successfully!');
-        })
+    // -----------------------------------------------------------------
 
-    // initialInquirer();
+    // inquirer
+    //     .prompt([
+    //         {
+    //             type: 'input',
+    //             message: 'What is the name of the role you want to add?',
+    //             name: 'newRoleTitle'
+    //         },
+    //         {
+    //             type: 'list',
+    //             message: 'What department will this role fall into?',
+    //             name: 'newRoleDept',
+    //             choices: [
+    //                 deptListNames
+    //             ]
+    //         },
+    //         {
+    //             type: 'number',
+    //             message: 'What is the salary for this role?',
+    //             name: 'newRoleSalary'
+    //         }
+    //     ]).then(function (res) {
+    //         console.log(res);
+    //         // Now, using magic and mysql, create a new department?
+    //         // ----------------------------------------------------
+    //         // INSERT INTO empRole(title, salary, departmentID)
+    //         // VALUES (`${res.newDeptName}, ${res.newRoleSalary}, ${res.newRoleDept}`)
+    //         // console.log('New role added successfully!');
+    //     })
+    // // ---------------------------------------------------------------
+    // // initialInquirer();
 };
 
-
+// This is breaking after getting past the first question. Needs acces to managerList, but IDK how to write conditional logic for this to happen.
 function createEmp() {
     let deptListNames;
 
