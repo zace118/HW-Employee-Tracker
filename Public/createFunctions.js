@@ -36,7 +36,7 @@ function createDept() {
 };
 
 
-
+// This is breaking after getting past the first question. 
 function createRole() {
     let deptListNames;
     let deptListIDs;
@@ -45,7 +45,7 @@ function createRole() {
         if (err) throw err;
         for (let i = 0; i < res.length; i++) {
             deptListNames = (res[i].deptName);
-            deptListIDs = (res[i].deptID)
+            deptListIDs = (res[i].deptID);
         }
     })
 
@@ -94,6 +94,8 @@ function createEmp() {
         }
     })
 
+    // Need the connection.query to access the manager information....so pull from employee table if title === "lead" add key:value pair of manager name. 
+
     inquirer
         .prompt([
             {
@@ -126,7 +128,7 @@ function createEmp() {
 
         })
 
-    // tarcker();
+    // tracker();
 };
 
 module.exports = {
