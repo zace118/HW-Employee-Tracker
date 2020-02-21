@@ -19,7 +19,8 @@ VALUES ('Sales'), ('Finance'), ('Legal'), ('Engineering'), ('Kitchen');
 
 SELECT * FROM department;
 
------------------------------------------------- 
+DELETE 
+-- ------------------------------------------------ 
 -- THIS IS GOOD TO GO!
 DROP TABLE empRole;
 
