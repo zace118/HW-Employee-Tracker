@@ -6,7 +6,7 @@ USE tracker_db;
 
 -- ------------------------------------------------ 
 -- THIS IS GOOD TO GO!!!
-DROP TABLE department; 
+DROP TABLE department;
 
 CREATE TABLE department (
     id INT NOT NULL auto_increment,
@@ -19,7 +19,6 @@ VALUES ('Sales'), ('Finance'), ('Legal'), ('Engineering'), ('Kitchen');
 
 SELECT * FROM department;
 
-DELETE 
 -- ------------------------------------------------ 
 -- THIS IS GOOD TO GO!
 DROP TABLE empRole;
@@ -53,7 +52,8 @@ CREATE TABLE employee (
     FOREIGN KEY (managerID) REFERENCES employee(id)
 );
 
+-- Steve: 4, Lisa: 6, Eric: 5 
 INSERT INTO employee (firstName, lastName, roleID, managerID)
-VALUES ('Steve', 'Salesman', 2, NULL), ('Fred', 'Monayman', 5, NULL), ('Lisa', 'Lawya', 7, NULL), ('Kevin', 'Cook', 1, NULL), ('Marshall', 'Manager', 3, NULL), ('Marionne', 'Leader', 6, NULL);
+VALUES ('Steve', 'Salesman', 2, NULL), ('Fred', 'Monayman', 5, NULL), ('Lisa', 'Lawya', 7, NULL), ('Kevin', 'Cook', 1, NULL), ('Marshall', 'Manager', 3, NULL), ('Marionne', 'Leader', 6, NULL), ('Eric', 'Enjuhnir', 3, NULL);
 
 SELECT * FROM employee;
