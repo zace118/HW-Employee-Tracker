@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
+const cTable = require('console.table');
 // Requiring the connection (config)
 const connection = require('./Public/connection')
 // // Variables set to function paths
@@ -68,15 +69,18 @@ function tracker() {
 tracker();
 
 // --------------VIEW FUNCTIONS-------------------------------------------
+// --------------100%-------------------------------------------
+
 
 
 function viewDepts() {
     connection.query('SELECT * FROM department', function (err, res) {
         if (err) throw err;
+        console.table(res);
         for (let i = 0; i < res.length; i++) {
             deptNamesList = res[i].deptName;
             deptIDsList = res[i].deptID;
-            console.log(res[i].deptName);
+            // console.log(res[i].deptName);
         }
         tracker();
         // return true
@@ -116,6 +120,7 @@ function viewEmps() {
 
 // --------------CREATE FUNCTIONS------------------------------------------
 
+// --------------DEPT: 100%------------------------------------------
 // It's working, just need to get the tracker to wait until line 135 fires. 
 function createDept() {
     inquirer
@@ -142,53 +147,58 @@ function createDept() {
 
 };
 
-function createRole() {
-    let roleList;
+// --------------ROLE: 0%------------------------------------------
+// function createRole() {
+//     inquirer
+//         .prompt([
+//             {
+//                 type: 'input',
+//                 message: 'What is the name of the role you want to add?',
+//                 name: 'newRoleTitle'
+//             },
+//             {
+//                 type: 'number',
+//                 message: 'What is the salary for this role?',
+//                 name: 'newRoleSalary'
+//             },
+//             {
+//                 type: 'list',
+//                 message: 'What department will this role fall into?',
+//                 name: 'newRoleDept',
+//                 choices: [
+//                     'Sales',
+//                     'Finance',
+//                     'Legal',
+//                     'Engineering',
+//                     'Not listed'
+//                 ]
+//             },
+//         ]).then(function (res) {
+//             console.log(res);
+//             // Now, using magic and mysql, create a new department?
+//             // ----------------------------------------------------
+//             // INSERT INTO empRole(title, salary, departmentID)
+//             // VALUES (`${res.newDeptName}, ${res.newRoleSalary}, ${res.newRoleDept}`)
+//             // console.log('New role added successfully!');
 
-    connection.query('SELECT * FROM empRole', function (err, res) {
-        if (err) throw err;
-        // console.log(res)
-        for (let i = 0; i < res.length; i++) {
-            // console.log(`\n${res[i].title}`);
-            roleList = res[i].title;
-        }
-    })
+//             console.log(response.newDeptName);
+//             console.log('Inserting a new department...\n')
+//             connection.query(
+//                 `INSERT INTO empRole(title, salary, departmentID) VALUES (${res.newRoleTitle}, ${res.newRoleSalary}, ${res.})`,
+//                 function (err, res) {
+//                     if (err) throw err;
+//                     console.log(`New department "${response.newDeptName}" added successfully!`);
+//                     tracker();
+//                 }
+//             )
 
-    console.log(roleList);
+//             // tracker();
+//         })
+//     // connection.end();
+// };
 
-    // -----------------------------------------------------------------
-
-    // inquirer
-    //     .prompt([
-    //         {
-    //             type: 'input',
-    //             message: 'What is the name of the role you want to add?',
-    //             name: 'newRoleTitle'
-    //         },
-    //         {
-    //             type: 'list',
-    //             message: 'What department will this role fall into?',
-    //             name: 'newRoleDept',
-    //             choices: [
-    //                 'Thing1', 'Thing2', 'Thing3'
-    //             ]
-    //         },
-    //         {
-    //             type: 'number',
-    //             message: 'What is the salary for this role?',
-    //             name: 'newRoleSalary'
-    //         }
-    //     ]).then(function (res) {
-    //         console.log(res);
-    //         // Now, using magic and mysql, create a new department?
-    //         // ----------------------------------------------------
-    //         // INSERT INTO empRole(title, salary, departmentID)
-    //         // VALUES (`${res.newDeptName}, ${res.newRoleSalary}, ${res.newRoleDept}`)
-    //         // console.log('New role added successfully!');
-    //     })
-    // tracker();
-    connection.end();
-};
+// --------------EMP: 90%------------------------------------------
+// ---I DON'T THINK IT'S INSERTING CORRECTLY BECAUSE OF THE FK----
 
 function createEmp() {
     // Selecting from the table who the managers are.
@@ -237,18 +247,19 @@ function createEmp() {
                 }
             ]).then(function (response) {
                 // Sets the value of the last question in the Inquirer to a variable
-                const res_NewEmpMgr = response.newEmpMgr
+                const res_NewEmpMgr = response.newEmpMgr;
+                console.log(res_NewEmpMgr);
 
                 // Slices the above variable at the first white space, indicating the first name, and sets that value (the new employee's MGR's first name) to a new variable
-                const newEmpMgrFN = res_NewEmpMgr.substr(0, res_NewEmpMgr.indexOf(' '))
+                const newEmpMgrFN = res_NewEmpMgr.substr(0, res_NewEmpMgr.indexOf(' '));
                 // console.log(newEmpMgrFN);
 
                 // Trying to reverse search for the new employee's MGR's ID# using the above variable 
                 connection.query('SELECT roleID FROM employee WHERE employee.firstName = ?', [newEmpMgrFN], function (err, answer) {
                     // console.log(answer);
                     const newEmpMgrID = answer[0].roleID;
-                    console.log(newEmpMgrID)
-                    connection.end();
+                    console.log(newEmpMgrID);
+
 
                     // Switch case to send the data from the inquirer to MySQL
                     switch (response.newEmpTitle) {
@@ -260,66 +271,75 @@ function createEmp() {
                                 roleID: 1,
                                 managerID: newEmpMgrID
                             })
-                            // tracker();
+                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
+                            tracker();
                             break;
                         case ('Sales Associate'):
                             connection.query(
                                 'INSERT INTO employee SET ?', {
                                 firstName: response.newEmpFirstName,
                                 lastName: response.newEmpLastName,
-                                role_id: 2,
+                                roleID: 2,
                                 managerID: newEmpMgrID
                             })
-
+                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
+                            tracker();
                             break;
                         case ('Lead Engineer'):
                             connection.query(
                                 'INSERT INTO employee SET ?', {
                                 firstName: response.newEmpFirstName,
                                 lastName: response.newEmpLastName,
-                                role_id: 3,
+                                roleID: 3,
                                 managerID: newEmpMgrID
                             })
-
+                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
+                            tracker();
                             break;
                         case ('Software Engineer'):
                             connection.query(
                                 'INSERT INTO employee SET ?', {
                                 firstName: response.newEmpFirstName,
                                 lastName: response.newEmpLastName,
-                                role_id: 4,
+                                roleID: 4,
                                 managerID: newEmpMgrID
                             })
+                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
+                            tracker();
                             break;
                         case ('Accountant'):
                             connection.query(
                                 'INSERT INTO employee SET ?', {
                                 firstName: response.newEmpFirstName,
                                 lastName: response.newEmpLastName,
-                                role_id: 5,
+                                roleID: 5,
                                 managerID: newEmpMgrID
                             })
+                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
+                            tracker();
                             break;
                         case ('Legal Team Lead'):
                             connection.query(
                                 'INSERT INTO employee SET ?', {
                                 firstName: response.newEmpFirstName,
                                 lastName: response.newEmpLastName,
-                                role_id: 6,
+                                roleID: 6,
                                 managerID: newEmpMgrID
                             })
+                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
+                            tracker();
                             break;
                         case ('Lawyer'):
                             connection.query(
                                 'INSERT INTO employee SET ?', {
                                 firstName: response.newEmpFirstName,
                                 lastName: response.newEmpLastName,
-                                role_id: 7,
+                                roleID: 7,
                                 managerID: newEmpMgrID
                             })
-
-                        // tracker();
-
+                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
+                            tracker();
+                            break;
                     }
 
                 });
@@ -333,48 +353,61 @@ function createEmp() {
 // ---------------UPDATE FUNCTIONS---------------------------------------
 
 
+
 function updateRole() {
+    // console.log("this is working at it's most basic element...")
+
     // Starts prompt of who to update ---> what's their new role --->FIN
     inquirer
         .prompt([
             {
-                type: 'list',
-                message: `What employee's role did you want to update?`,
-                name: 'empName',
-                choices: [
-                    empList
-                ]
-            },
-            {
-                type: 'list',
-                message: `What's the employee's new role?`,
-                name: 'newRole',
-                choices: [
-                    deptListNames
-                ]
-            }.then(function (response) {
-                console.log(response);
-            })
+                type: 'input',
+                message: `What's going on?`,
+                name: 'skgoinon'
+            }
+                // {
+                //     type: 'list',
+                //     message: `What employee's role did you want to update?`,
+                //     name: 'empName',
+                //     choices: [
+                //         'one',
+                //         'two',
+                //         'three'
+                //     ]
+                // },
+                // {
+                //     type: 'list',
+                //     message: `What's the employee's new role?`,
+                //     name: 'newRole',
+                //     choices: [
+                //         'one',
+                //         'two',
+                //         'three'
+                //     ]
+                // }
+                .then(function (response) {
+                    console.log(response);
+                })
         ])
 
-    connection.query("UPDATE employee SET ? WHERE ?",
-        [
-            {
-                roleID: 4
-                // match ID to the correct job title?
-            },
-            {
-                employee: 4
-                // firstName + lastName === empName
-            }
-        ],
-        function (err, res) {
-            if (err) throw err;
-            console.log(res.affectedRows + " products updated!\n");
-            // Call deleteProduct AFTER the UPDATE completes
-            tracker();
-        }
-    );
+    // connection.query("UPDATE employee SET ? WHERE ?",
+    //     [
+    //         {
+    //             roleID: 4
+    //             // match ID to the correct job title?
+    //         },
+    //         {
+    //             employee: 4
+    //             // firstName + lastName === empName
+    //         }
+    //     ],
+    //     function (err, res) {
+    //         if (err) throw err;
+    //         console.log(res.affectedRows + " products updated!\n");
+    //         // Call deleteProduct AFTER the UPDATE completes
+    //         tracker();
+    //     }
+    // );
 }
 
 function updateManager() {

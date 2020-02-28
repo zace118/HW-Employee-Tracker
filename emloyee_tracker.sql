@@ -48,12 +48,12 @@ CREATE TABLE employee (
     roleID INT,
     managerID INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (roleID) REFERENCES empRole(id),
-    FOREIGN KEY (managerID) REFERENCES employee(id)
+    FOREIGN KEY (roleID) REFERENCES empRole(id)
+    -- FOREIGN KEY (managerID) REFERENCES employee(id)
 );
 
 -- Steve: 4, Lisa: 6, Eric: 5 
 INSERT INTO employee (firstName, lastName, roleID, managerID)
-VALUES ('Steve', 'Salesman', 2, NULL), ('Fred', 'Monayman', 5, NULL), ('Lisa', 'Lawya', 7, NULL), ('Kevin', 'Cook', 1, NULL), ('Marshall', 'Manager', 3, NULL), ('Marionne', 'Leader', 6, NULL), ('Eric', 'Enjuhnir', 3, NULL);
+VALUES ('Steve', 'Salesman', 2, 4), ('Fred', 'Monayman', 5, NULL), ('Lisa', 'Lawya', 7, 6), ('Kevin', 'Cook', 1, NULL), ('Marshall', 'Manager', 3, NULL), ('Marionne', 'Leader', 6, NULL), ('Eric', 'Enjuhnir', 3, 5);
 
 SELECT * FROM employee;
