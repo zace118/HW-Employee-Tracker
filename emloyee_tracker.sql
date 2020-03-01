@@ -57,3 +57,5 @@ INSERT INTO employee (firstName, lastName, roleID, managerID)
 VALUES ('Steve', 'Salesman', 2, 4), ('Fred', 'Monayman', 5, NULL), ('Lisa', 'Lawya', 7, 6), ('Kevin', 'Cook', 1, NULL), ('Marshall', 'Manager', 3, NULL), ('Marionne', 'Leader', 6, NULL), ('Eric', 'Enjuhnir', 3, 5);
 
 SELECT * FROM employee;
+
+SELECT id FROM department WHERE deptName = Sales;

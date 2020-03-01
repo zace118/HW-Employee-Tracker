@@ -147,58 +147,58 @@ function createDept() {
 
 };
 
-// --------------ROLE: 0%------------------------------------------
-// function createRole() {
-//     inquirer
-//         .prompt([
-//             {
-//                 type: 'input',
-//                 message: 'What is the name of the role you want to add?',
-//                 name: 'newRoleTitle'
-//             },
-//             {
-//                 type: 'number',
-//                 message: 'What is the salary for this role?',
-//                 name: 'newRoleSalary'
-//             },
-//             {
-//                 type: 'list',
-//                 message: 'What department will this role fall into?',
-//                 name: 'newRoleDept',
-//                 choices: [
-//                     'Sales',
-//                     'Finance',
-//                     'Legal',
-//                     'Engineering',
-//                     'Not listed'
-//                 ]
-//             },
-//         ]).then(function (res) {
-//             console.log(res);
-//             // Now, using magic and mysql, create a new department?
-//             // ----------------------------------------------------
-//             // INSERT INTO empRole(title, salary, departmentID)
-//             // VALUES (`${res.newDeptName}, ${res.newRoleSalary}, ${res.newRoleDept}`)
-//             // console.log('New role added successfully!');
+// --------------ROLE: 100%------------------------------------------
 
-//             console.log(response.newDeptName);
-//             console.log('Inserting a new department...\n')
-//             connection.query(
-//                 `INSERT INTO empRole(title, salary, departmentID) VALUES (${res.newRoleTitle}, ${res.newRoleSalary}, ${res.})`,
-//                 function (err, res) {
-//                     if (err) throw err;
-//                     console.log(`New department "${response.newDeptName}" added successfully!`);
-//                     tracker();
-//                 }
-//             )
+function createRole() {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the role you want to add?',
+                name: 'newRoleTitle'
+            },
+            {
+                type: 'number',
+                message: 'What is the salary for this role?',
+                name: 'newRoleSalary'
+            },
+            {
+                type: 'list',
+                message: 'What department will this role fall into?',
+                name: 'newRoleDept',
+                choices: [
+                    'Sales',
+                    'Finance',
+                    'Legal',
+                    'Engineering',
+                    'Not listed'
+                ]
+            },
+        ]).then(function (res) {
+            // console.log(res);
+            // console.log(res.newRoleDept);
 
-//             // tracker();
-//         })
-//     // connection.end();
-// };
+            // Need the dept ID from the info we get from res.newRoleDept
+            connection.query(`SELECT id FROM department WHERE deptName = '${[res.newRoleDept]}';`, function (err, response) {
+                if (err) throw err;
+                const newRoleDeptID = response[0].id;
+                console.log(newRoleDeptID);
 
-// --------------EMP: 90%------------------------------------------
-// ---I DON'T THINK IT'S INSERTING CORRECTLY BECAUSE OF THE FK----
+
+                // Adding the values from the inquirer into the table 
+                connection.query(
+                    `INSERT INTO empRole (title, salary, departmentID) VALUES ('${res.newRoleTitle}', ${res.newRoleSalary}, ${newRoleDeptID})`,
+                    function (err, res) {
+                        if (err) throw err;
+                        console.log(`New department "${response.newRoleTitle}" added successfully!`);
+                        tracker();
+                    }
+                )
+            })
+        })
+};
+
+// --------------EMP: 100%------------------------------------------
 
 function createEmp() {
     // Selecting from the table who the managers are.
@@ -355,40 +355,37 @@ function createEmp() {
 
 
 function updateRole() {
-    // console.log("this is working at it's most basic element...")
-
-    // Starts prompt of who to update ---> what's their new role --->FIN
     inquirer
         .prompt([
             {
-                type: 'input',
-                message: `What's going on?`,
-                name: 'skgoinon'
-            }
-                // {
-                //     type: 'list',
-                //     message: `What employee's role did you want to update?`,
-                //     name: 'empName',
-                //     choices: [
-                //         'one',
-                //         'two',
-                //         'three'
-                //     ]
-                // },
-                // {
-                //     type: 'list',
-                //     message: `What's the employee's new role?`,
-                //     name: 'newRole',
-                //     choices: [
-                //         'one',
-                //         'two',
-                //         'three'
-                //     ]
-                // }
-                .then(function (response) {
-                    console.log(response);
-                })
-        ])
+                type: 'list',
+                message: `What employee's role did you want to update?`,
+                name: 'empName',
+                choices: function (res) {
+                    connection.query('SELECT * FROM employee', function (err, res) {
+                        if (err) throw err;
+                        // console.log(res);
+                        let empArray = []
+                        for (let i = 0; i < res.length; i++) {
+                            empArray.push(`${res[i].firstName} ${res[i].lastName}`);
+                        }
+                        console.log(empArray);
+                        return (empArray);
+                    })
+
+                }
+            },
+            // {
+            //     type: 'list',
+            //     message: `What employee's new role?`,
+            //     name: 'empRole',
+            //     choices: [
+            //         // List roles
+            //     ]
+            // }
+        ]).then(function (response) {
+            console.log(response)
+        });
 
     // connection.query("UPDATE employee SET ? WHERE ?",
     //     [
