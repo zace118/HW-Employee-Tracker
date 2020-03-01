@@ -328,56 +328,77 @@ function createEmp() {
 
 // ---------------UPDATE FUNCTIONS---------------------------------------
 function updateRole() {
+    // This query allows us to pull the list of employee names for the chocies array in the inquirer
     connection.query('SELECT * FROM employee', function (err, res) {
         if (err) throw err;
         // console.log(res);
-        // let empArray = []
-        // for (let i = 0; i < res.length; i++) {
-        //     empArray.push(`${res[i].firstName} ${res[i].lastName}`);
-        // }
+
+        // This loops through res exactly like a for loop and returns the first and last name of the employees.
         let empArray = res.map((element, index, array) => {
             return `${element.firstName} ${element.lastName}`
         });
-        // console.log(empArray);
-        inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    message: `What employee's role did you want to update?`,
-                    name: 'empName',
-                    choices: empArray
-                },
-                // {
-                //     type: 'list',
-                //     message: `What employee's new role?`,
-                //     name: 'empRole',
-                //     choices: [
-                //         // List roles
-                //     ]
-                // }
-            ]).then(function (response) {
-                console.log(response)
-            });
-    })
 
-    // connection.query("UPDATE employee SET ? WHERE ?",
-    //     [
-    //         {
-    //             roleID: 4
-    //             // match ID to the correct job title?
-    //         },
-    //         {
-    //             employee: 4
-    //             // firstName + lastName === empName
-    //         }
-    //     ],
-    //     function (err, res) {
-    //         if (err) throw err;
-    //         console.log(res.affectedRows + " products updated!\n");
-    //         // Call deleteProduct AFTER the UPDATE completes
-    //         tracker();
-    //     }
-    // );
+        // This query allows us to pull the list of roles for the chocies array in the inquirer 
+        connection.query('SELECT * FROM empRole', function (err, response) {
+            if (err) throw err;
+            // console.log(response)
+            let empRoleArray = response.map((element, i, arr) => {
+                return `${element.title}`
+            })
+
+            // console.log(empArray);
+            inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        message: `What employee's role did you want to update?`,
+                        name: 'empName',
+                        choices: empArray
+                    },
+                    {
+                        type: 'list',
+                        message: `What employee's new role?`,
+                        name: 'empRole',
+                        choices: empRoleArray
+                    }
+                ]).then(function (answer) {
+                    console.log(answer)
+                    const fullName = answer.empName;
+
+                    // Splitting the first name to use in the UPDATE query.
+                    const ansEmpFN = answer.empName.substr(0, answer.empName.indexOf(' '));
+                    // console.log(ansEmpFN);
+
+                    // Pulling the ID of the new role the employee is getting updated into. 
+                    connection.query('SELECT id FROM empRole WHERE empRole.title = ?', [answer.empRole], function (err, res) {
+                        // console.log(res[0].id);
+
+                        // This is the query that actually updates the database
+                        connection.query("UPDATE employee SET ? WHERE ?",
+                            [
+                                {
+                                    roleID: res[0].id
+                                    // match ID to the correct job title?
+                                },
+                                {
+                                    firstName: ansEmpFN
+                                    // firstNames
+                                }
+                            ],
+                            function (err, res) {
+                                if (err) throw err;
+                                console.log(fullName + "'s role has been updated!");
+
+                                tracker();
+                            }
+                        );
+                    });
+
+
+                });
+        })
+
+    })
 }
 
 function updateManager() {
@@ -385,4 +406,4 @@ function updateManager() {
     tracker();
 };
 
-// ---------------END OF UPDATE FUNCTIONS----------------------------------
+// ------------END OF UPDATE FUNCTIONS---------------------------
