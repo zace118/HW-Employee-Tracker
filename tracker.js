@@ -131,49 +131,51 @@ function createDept() {
 };
 
 function createRole() {
-    inquirer
-        .prompt([
-            {
-                type: 'input',
-                message: 'What is the name of the role you want to add?',
-                name: 'newRoleTitle'
-            },
-            {
-                type: 'number',
-                message: 'What is the salary for this role?',
-                name: 'newRoleSalary'
-            },
-            {
-                type: 'list',
-                message: 'What department will this role fall into?',
-                name: 'newRoleDept',
-                choices: [
-                    'Sales',
-                    'Finance',
-                    'Legal',
-                    'Engineering',
-                    'Not listed'
-                ]
-            },
-        ]).then(function (res) {
-            // Need the dept ID from the info we get from res.newRoleDept
-            connection.query(`SELECT id FROM department WHERE deptName = '${[res.newRoleDept]}';`, function (err, response) {
-                if (err) throw err;
-                const newRoleDeptID = response[0].id;
-                // console.log(newRoleDeptID);
-
-
-                // Adding the values from the inquirer into the table 
-                connection.query(
-                    `INSERT INTO empRole (title, salary, departmentID) VALUES ('${res.newRoleTitle}', ${res.newRoleSalary}, ${newRoleDeptID})`,
-                    function (err, res) {
-                        if (err) throw err;
-                        console.log(`----------\nNew department "${response.newRoleTitle}" added successfully!\n----------`);
-                        tracker();
-                    }
-                )
-            })
+    connection.query('SELECT * FROM department', function (err, response) {
+        if (err) throw err;
+        // console.log(response)
+        let deptArray = response.map((element, index, array) => {
+            return `${element.deptName}`
         })
+
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    message: 'What is the name of the role you want to add?',
+                    name: 'newRoleTitle'
+                },
+                {
+                    type: 'number',
+                    message: 'What is the salary for this role?',
+                    name: 'newRoleSalary'
+                },
+                {
+                    type: 'list',
+                    message: 'What department will this role fall into?',
+                    name: 'newRoleDept',
+                    choices: deptArray
+                },
+            ]).then(function (res) {
+                // Need the dept ID from the info we get from res.newRoleDept
+                connection.query(`SELECT id FROM department WHERE deptName = '${[res.newRoleDept]}';`, function (err, response) {
+                    if (err) throw err;
+                    const newRoleDeptID = response[0].id;
+                    // console.log(newRoleDeptID);
+
+
+                    // Adding the values from the inquirer into the table 
+                    connection.query(
+                        `INSERT INTO empRole (title, salary, departmentID) VALUES ('${res.newRoleTitle}', ${res.newRoleSalary}, ${newRoleDeptID})`,
+                        function (err, answer) {
+                            if (err) throw err;
+                            console.log(`----------\nNew department "${res.newRoleTitle}" added successfully!\n----------`);
+                            tracker();
+                        }
+                    )
+                })
+            })
+    })
 };
 
 function createEmp() {
@@ -331,7 +333,9 @@ function updateRole() {
 }
 
 function updateManager() {
-    console.log("'ello guvna!");
+
+
+
     tracker();
 };
 

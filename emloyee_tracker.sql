@@ -58,4 +58,4 @@ VALUES ('Steve', 'Salesman', 2, 4), ('Fred', 'Monayman', 5, NULL), ('Lisa', 'Law
 
 SELECT * FROM employee;
 
-SELECT id FROM department WHERE deptName = Sales;
+-- SELECT id FROM department WHERE deptName = Sales;
