@@ -64,41 +64,33 @@ function tracker() {
 
 tracker();
 
+
+
 // --------------VIEW FUNCTIONS-------------------------------------------
 function viewDepts() {
     connection.query('SELECT * FROM department', function (err, res) {
         if (err) throw err;
         console.table(res);
-        // for (let i = 0; i < res.length; i++) {
-        //     deptNamesList = res[i].deptName;
-        //     deptIDsList = res[i].deptID;
-        // }
         tracker();
     })
 
 };
+
+
 
 function viewRoles() {
     connection.query('SELECT * FROM empRole', function (err, res) {
         if (err) throw err;
         console.table(res)
-        // for (let i = 0; i < res.length; i++) {
-        //     console.log(res[i].title);
-        // }
         tracker();
     })
 };
+
 
 function viewEmps() {
     connection.query('SELECT * FROM employee', function (err, res) {
         if (err) throw err;
         console.table(res);
-        // for (let i = 0; i < res.length; i++) {
-        //     empNamesList = (`${res[i].firstName} ${res[i].lastName}`);
-        //     // empIDsList = (res[i].id);
-        //     console.log(empNamesList);
-        //     // console.log(empIDsList);
-        // }
         tracker();
     })
 };
@@ -107,6 +99,7 @@ function viewEmps() {
 
 
 // --------------CREATE FUNCTIONS------------------------------------------ 
+
 function createDept() {
     inquirer
         .prompt([
@@ -130,7 +123,10 @@ function createDept() {
 
 };
 
+
+
 function createRole() {
+    // This query builds the array for the departments for us to use in inquirer
     connection.query('SELECT * FROM department', function (err, response) {
         if (err) throw err;
         // console.log(response)
@@ -178,8 +174,10 @@ function createRole() {
     })
 };
 
+
+
 function createEmp() {
-    // Selecting from the table who the managers are.
+    // This query builds the array for the managers for us to use in inquirer. It finds managers by searching for any employee who has a value of NULL as their managerID
     connection.query('SELECT * FROM employee WHERE employee.managerID IS NULL', function (err, res) {
         if (err) throw err;
         // console.log(res);
@@ -252,9 +250,11 @@ function createEmp() {
 // ---------------END OF CREATE FUNCTIONS--------------------------------
 
 
+
 // ---------------UPDATE FUNCTIONS---------------------------------------
+
 function updateRole() {
-    // This query allows us to pull the list of employee names for the chocies array in the inquirer
+    // This query builds the array for the employees for us to use in inquirer
     connection.query('SELECT * FROM employee', function (err, res) {
         if (err) throw err;
         // console.log(res);
@@ -264,7 +264,7 @@ function updateRole() {
             return `${element.firstName} ${element.lastName}`
         });
 
-        // This query allows us to pull the list of roles for the chocies array in the inquirer 
+        // This query builds the array for the roles for us to use in inquirer
         connection.query('SELECT * FROM empRole', function (err, response) {
             if (err) throw err;
             // console.log(response)
@@ -272,7 +272,6 @@ function updateRole() {
                 return `${element.title}`
             })
 
-            // console.log(empArray);
             inquirer
                 .prompt([
                     {
@@ -326,8 +325,10 @@ function updateRole() {
     })
 }
 
+
+
 function deleteEmp() {
-    // This query allows us to pull the list of employee names for the chocies array in the inquirer
+    // This query builds the array for the employees for us to use in inquirer
     connection.query('SELECT * FROM employee', function (err, res) {
         if (err) throw err;
         // console.log(res);
