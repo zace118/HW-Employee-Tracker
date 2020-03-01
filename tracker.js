@@ -3,10 +3,6 @@ const mysql = require('mysql');
 const cTable = require('console.table');
 // Requiring the connection (config)
 const connection = require('./Public/connection')
-// // Variables set to function paths
-// const createFunctions = require('./Public/createFunctions');
-// const viewFunctions = require('./Public/viewFunctions');
-// const updateFunctions = require('./Public/updateFunctions');
 
 function tracker() {
     // Using inquirer, be able to ADD departments, roles, employees, VIEW depts, roles, and emps, and UPDATE existing employee roles.
@@ -69,10 +65,6 @@ function tracker() {
 tracker();
 
 // --------------VIEW FUNCTIONS-------------------------------------------
-// --------------100%-------------------------------------------
-
-
-
 function viewDepts() {
     connection.query('SELECT * FROM department', function (err, res) {
         if (err) throw err;
@@ -80,10 +72,8 @@ function viewDepts() {
         for (let i = 0; i < res.length; i++) {
             deptNamesList = res[i].deptName;
             deptIDsList = res[i].deptID;
-            // console.log(res[i].deptName);
         }
         tracker();
-        // return true
     })
 
 };
@@ -96,7 +86,6 @@ function viewRoles() {
             console.log(res[i].title);
         }
         tracker();
-        // return true
     })
 };
 
@@ -111,17 +100,13 @@ function viewEmps() {
             console.log(empIDsList)
         }
         tracker();
-        // connection.end();
-        // return true
     })
 };
 // --------------END OF VIEW FUNCTIONS-------------------------------------
 
 
-// --------------CREATE FUNCTIONS------------------------------------------
 
-// --------------DEPT: 100%------------------------------------------
-// It's working, just need to get the tracker to wait until line 135 fires. 
+// --------------CREATE FUNCTIONS------------------------------------------ 
 function createDept() {
     inquirer
         .prompt([
@@ -131,7 +116,7 @@ function createDept() {
                 name: 'newDeptName'
             }
         ]).then(function (response) {
-            console.log(response.newDeptName);
+            // console.log(response.newDeptName);
             console.log('Inserting a new department...\n')
             connection.query(
                 `INSERT INTO department (deptName) VALUES ('${response.newDeptName}')`,
@@ -141,13 +126,9 @@ function createDept() {
                     tracker();
                 }
             )
-            // console.log("truuuue");
-            return true;
         })
 
 };
-
-// --------------ROLE: 100%------------------------------------------
 
 function createRole() {
     inquirer
@@ -175,14 +156,11 @@ function createRole() {
                 ]
             },
         ]).then(function (res) {
-            // console.log(res);
-            // console.log(res.newRoleDept);
-
             // Need the dept ID from the info we get from res.newRoleDept
             connection.query(`SELECT id FROM department WHERE deptName = '${[res.newRoleDept]}';`, function (err, response) {
                 if (err) throw err;
                 const newRoleDeptID = response[0].id;
-                console.log(newRoleDeptID);
+                // console.log(newRoleDeptID);
 
 
                 // Adding the values from the inquirer into the table 
@@ -197,8 +175,6 @@ function createRole() {
             })
         })
 };
-
-// --------------EMP: 100%------------------------------------------
 
 function createEmp() {
     // Selecting from the table who the managers are.
@@ -347,13 +323,11 @@ function createEmp() {
             })
     });
 };
-
 // ---------------END OF CREATE FUNCTIONS--------------------------------
 
+
+
 // ---------------UPDATE FUNCTIONS---------------------------------------
-
-
-
 function updateRole() {
     inquirer
         .prompt([
