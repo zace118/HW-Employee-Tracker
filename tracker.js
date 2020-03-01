@@ -122,7 +122,7 @@ function createDept() {
                 `INSERT INTO department (deptName) VALUES ('${response.newDeptName}')`,
                 function (err, res) {
                     if (err) throw err;
-                    console.log(`New department "${response.newDeptName}" added successfully!`);
+                    console.log(`----------\nNew department "${response.newDeptName}" added successfully!\n----------`);
                     tracker();
                 }
             )
@@ -168,7 +168,7 @@ function createRole() {
                     `INSERT INTO empRole (title, salary, departmentID) VALUES ('${res.newRoleTitle}', ${res.newRoleSalary}, ${newRoleDeptID})`,
                     function (err, res) {
                         if (err) throw err;
-                        console.log(`New department "${response.newRoleTitle}" added successfully!`);
+                        console.log(`----------\nNew department "${response.newRoleTitle}" added successfully!\n----------`);
                         tracker();
                     }
                 )
@@ -178,83 +178,78 @@ function createRole() {
 
 function createEmp() {
     // Selecting from the table who the managers are.
-    connection.query('SELECT * FROM employee WHERE employee.roleID IN (1,3,7)', function (err, res) {
+    connection.query('SELECT * FROM employee WHERE employee.managerID IS NULL', function (err, res) {
         if (err) throw err;
+        // console.log(res);
+        let mgrArray = res.map((element, index, array) => {
+            return `${element.firstName} ${element.lastName}`
+        })
 
-        inquirer
-            .prompt([
-                {
-                    type: 'input',
-                    message: `What is the employee's first name?`,
-                    name: 'newEmpFirstName'
-                },
-                {
-                    type: 'input',
-                    message: `What is the employee's last name?`,
-                    name: 'newEmpLastName'
-                },
-                {
-                    type: 'list',
-                    message: `What is the employee's title?`,
-                    name: 'newEmpTitle',
-                    choices: [
-                        'Sales Lead',
-                        'Sales Associate',
-                        'Lead Engineer',
-                        'Software Engineer',
-                        'Accountant',
-                        'Legal Team Lead',
-                        'Lawyer'
-                    ]
-                },
-                {
-                    type: 'list',
-                    message: `Who is the new employee's manager?`,
-                    name: 'newEmpMgr',
-                    choices: function () {
-                        let mgrArray = []
-                        // console.log(res);
-
-                        for (let i = 0; i < res.length; i++) {
-                            mgrArray.push(`${res[i].firstName} ${res[i].lastName}`);
-                        }
-                        return (mgrArray);
-                    }
-                }
-            ]).then(function (response) {
-                // Sets the value of the last question in the Inquirer to a variable
-                const res_NewEmpMgr = response.newEmpMgr;
-                // console.log(res_NewEmpMgr);
-
-                // Slices the above variable at the first white space, indicating the first name, and sets that value (the new employee's MGR's first name) to a new variable
-                const newEmpMgrFN = res_NewEmpMgr.substr(0, res_NewEmpMgr.indexOf(' '));
-                // console.log(newEmpMgrFN);
-
-                // Trying to reverse search for the new employee's MGR's ID# using the above variable 
-                connection.query('SELECT roleID FROM employee WHERE employee.firstName = ?', [newEmpMgrFN], function (err, answer) {
-                    // console.log(answer);
-                    const newEmpMgrID = answer[0].roleID;
-                    // console.log(newEmpMgrID);
-
-
-                    // Pulling the ID of the new role the employee is getting updated into. 
-                    connection.query('SELECT id FROM empRole WHERE empRole.title = ?', [response.newEmpTitle], function (err, res) {
-                        // console.log(res[0].id);
-                        const newEmpRoleID = res[0].id
-
-                        connection.query('INSERT INTO employee SET ?', {
-                            firstName: response.newEmpFirstName,
-                            lastName: response.newEmpLastName,
-                            roleID: newEmpRoleID,
-                            managerID: newEmpMgrID
-                        })
-                        console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
-                        tracker();
-                    });
-
-                });
-
+        // This query allows us to pull the list of roles for the chocies array in the inquirer 
+        connection.query('SELECT * FROM empRole', function (err, response) {
+            if (err) throw err;
+            // console.log(response)
+            let empRoleArray = response.map((el, i, arr) => {
+                return `${el.title}`
             })
+
+            inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        message: `What is the employee's first name?`,
+                        name: 'newEmpFirstName'
+                    },
+                    {
+                        type: 'input',
+                        message: `What is the employee's last name?`,
+                        name: 'newEmpLastName'
+                    },
+                    {
+                        type: 'list',
+                        message: `What is the employee's title?`,
+                        name: 'newEmpTitle',
+                        choices: empRoleArray
+                    },
+                    {
+                        type: 'list',
+                        message: `Who is the new employee's manager?`,
+                        name: 'newEmpMgr',
+                        choices: mgrArray
+                    }
+                ]).then(function (response) {
+                    // Sets the value of the last question in the Inquirer to a variable
+                    const res_NewEmpMgr = response.newEmpMgr;
+                    // console.log(res_NewEmpMgr);
+
+                    // Slices the above variable at the first white space, indicating the first name, and sets that value (the new employee's MGR's first name) to a new variable
+                    const newEmpMgrFN = res_NewEmpMgr.substr(0, res_NewEmpMgr.indexOf(' '));
+                    // console.log(newEmpMgrFN);
+
+                    // Trying to reverse search for the new employee's MGR's ID# using the above variable 
+                    connection.query('SELECT roleID FROM employee WHERE employee.firstName = ?', [newEmpMgrFN], function (err, answer) {
+                        // console.log(answer);
+                        const newEmpMgrID = answer[0].roleID;
+                        // console.log(newEmpMgrID);
+
+
+                        // Pulling the ID of the new role the employee is getting updated into. 
+                        connection.query('SELECT id FROM empRole WHERE empRole.title = ?', [response.newEmpTitle], function (err, res) {
+                            // console.log(res[0].id);
+                            const newEmpRoleID = res[0].id
+
+                            connection.query('INSERT INTO employee SET ?', {
+                                firstName: response.newEmpFirstName,
+                                lastName: response.newEmpLastName,
+                                roleID: newEmpRoleID,
+                                managerID: newEmpMgrID
+                            })
+                            console.log(`----------\nNew employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!\n----------`);
+                            tracker();
+                        });
+                    });
+                })
+        });
     });
 };
 // ---------------END OF CREATE FUNCTIONS--------------------------------
@@ -321,7 +316,7 @@ function updateRole() {
                             ],
                             function (err, res) {
                                 if (err) throw err;
-                                console.log(fullName + "'s role has been updated!");
+                                console.log(`----------\n${fullName}'s role has been updated!\n----------`);
 
                                 tracker();
                             }
