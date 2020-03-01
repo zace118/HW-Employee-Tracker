@@ -326,40 +326,39 @@ function createEmp() {
 // ---------------END OF CREATE FUNCTIONS--------------------------------
 
 
-
 // ---------------UPDATE FUNCTIONS---------------------------------------
 function updateRole() {
-    inquirer
-        .prompt([
-            {
-                type: 'list',
-                message: `What employee's role did you want to update?`,
-                name: 'empName',
-                choices: function (res) {
-                    connection.query('SELECT * FROM employee', function (err, res) {
-                        if (err) throw err;
-                        // console.log(res);
-                        let empArray = []
-                        for (let i = 0; i < res.length; i++) {
-                            empArray.push(`${res[i].firstName} ${res[i].lastName}`);
-                        }
-                        console.log(empArray);
-                        return (empArray);
-                    })
-
-                }
-            },
-            // {
-            //     type: 'list',
-            //     message: `What employee's new role?`,
-            //     name: 'empRole',
-            //     choices: [
-            //         // List roles
-            //     ]
-            // }
-        ]).then(function (response) {
-            console.log(response)
+    connection.query('SELECT * FROM employee', function (err, res) {
+        if (err) throw err;
+        // console.log(res);
+        // let empArray = []
+        // for (let i = 0; i < res.length; i++) {
+        //     empArray.push(`${res[i].firstName} ${res[i].lastName}`);
+        // }
+        let empArray = res.map((element, index, array) => {
+            return `${element.firstName} ${element.lastName}`
         });
+        // console.log(empArray);
+        inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    message: `What employee's role did you want to update?`,
+                    name: 'empName',
+                    choices: empArray
+                },
+                // {
+                //     type: 'list',
+                //     message: `What employee's new role?`,
+                //     name: 'empRole',
+                //     choices: [
+                //         // List roles
+                //     ]
+                // }
+            ]).then(function (response) {
+                console.log(response)
+            });
+    })
 
     // connection.query("UPDATE employee SET ? WHERE ?",
     //     [
