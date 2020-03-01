@@ -224,7 +224,7 @@ function createEmp() {
             ]).then(function (response) {
                 // Sets the value of the last question in the Inquirer to a variable
                 const res_NewEmpMgr = response.newEmpMgr;
-                console.log(res_NewEmpMgr);
+                // console.log(res_NewEmpMgr);
 
                 // Slices the above variable at the first white space, indicating the first name, and sets that value (the new employee's MGR's first name) to a new variable
                 const newEmpMgrFN = res_NewEmpMgr.substr(0, res_NewEmpMgr.indexOf(' '));
@@ -234,89 +234,23 @@ function createEmp() {
                 connection.query('SELECT roleID FROM employee WHERE employee.firstName = ?', [newEmpMgrFN], function (err, answer) {
                     // console.log(answer);
                     const newEmpMgrID = answer[0].roleID;
-                    console.log(newEmpMgrID);
+                    // console.log(newEmpMgrID);
 
 
-                    // Switch case to send the data from the inquirer to MySQL
-                    switch (response.newEmpTitle) {
-                        case ('Sales Lead'):
-                            connection.query(
-                                'INSERT INTO employee SET ?', {
-                                firstName: response.newEmpFirstName,
-                                lastName: response.newEmpLastName,
-                                roleID: 1,
-                                managerID: newEmpMgrID
-                            })
-                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
-                            tracker();
-                            break;
-                        case ('Sales Associate'):
-                            connection.query(
-                                'INSERT INTO employee SET ?', {
-                                firstName: response.newEmpFirstName,
-                                lastName: response.newEmpLastName,
-                                roleID: 2,
-                                managerID: newEmpMgrID
-                            })
-                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
-                            tracker();
-                            break;
-                        case ('Lead Engineer'):
-                            connection.query(
-                                'INSERT INTO employee SET ?', {
-                                firstName: response.newEmpFirstName,
-                                lastName: response.newEmpLastName,
-                                roleID: 3,
-                                managerID: newEmpMgrID
-                            })
-                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
-                            tracker();
-                            break;
-                        case ('Software Engineer'):
-                            connection.query(
-                                'INSERT INTO employee SET ?', {
-                                firstName: response.newEmpFirstName,
-                                lastName: response.newEmpLastName,
-                                roleID: 4,
-                                managerID: newEmpMgrID
-                            })
-                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
-                            tracker();
-                            break;
-                        case ('Accountant'):
-                            connection.query(
-                                'INSERT INTO employee SET ?', {
-                                firstName: response.newEmpFirstName,
-                                lastName: response.newEmpLastName,
-                                roleID: 5,
-                                managerID: newEmpMgrID
-                            })
-                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
-                            tracker();
-                            break;
-                        case ('Legal Team Lead'):
-                            connection.query(
-                                'INSERT INTO employee SET ?', {
-                                firstName: response.newEmpFirstName,
-                                lastName: response.newEmpLastName,
-                                roleID: 6,
-                                managerID: newEmpMgrID
-                            })
-                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
-                            tracker();
-                            break;
-                        case ('Lawyer'):
-                            connection.query(
-                                'INSERT INTO employee SET ?', {
-                                firstName: response.newEmpFirstName,
-                                lastName: response.newEmpLastName,
-                                roleID: 7,
-                                managerID: newEmpMgrID
-                            })
-                            console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
-                            tracker();
-                            break;
-                    }
+                    // Pulling the ID of the new role the employee is getting updated into. 
+                    connection.query('SELECT id FROM empRole WHERE empRole.title = ?', [response.newEmpTitle], function (err, res) {
+                        // console.log(res[0].id);
+                        const newEmpRoleID = res[0].id
+
+                        connection.query('INSERT INTO employee SET ?', {
+                            firstName: response.newEmpFirstName,
+                            lastName: response.newEmpLastName,
+                            roleID: newEmpRoleID,
+                            managerID: newEmpMgrID
+                        })
+                        console.log(`New employee, ${response.newEmpFirstName} ${response.newEmpLastName} added!`);
+                        tracker();
+                    });
 
                 });
 
