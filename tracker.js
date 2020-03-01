@@ -20,7 +20,7 @@ function tracker() {
                     "View roles",
                     "View all employees",
                     "Update employee role",
-                    "Update employee manager"
+                    "Delete employee"
                 ]
             }
         ]).then(function (res) {
@@ -55,8 +55,8 @@ function tracker() {
                     updateRole();
                     break;
 
-                case 'Update employee manager':
-                    updateManager();
+                case 'Delete employee':
+                    deleteEmp();
                     break;
             }
         })
@@ -69,10 +69,10 @@ function viewDepts() {
     connection.query('SELECT * FROM department', function (err, res) {
         if (err) throw err;
         console.table(res);
-        for (let i = 0; i < res.length; i++) {
-            deptNamesList = res[i].deptName;
-            deptIDsList = res[i].deptID;
-        }
+        // for (let i = 0; i < res.length; i++) {
+        //     deptNamesList = res[i].deptName;
+        //     deptIDsList = res[i].deptID;
+        // }
         tracker();
     })
 
@@ -81,10 +81,10 @@ function viewDepts() {
 function viewRoles() {
     connection.query('SELECT * FROM empRole', function (err, res) {
         if (err) throw err;
-        // console.log(res)
-        for (let i = 0; i < res.length; i++) {
-            console.log(res[i].title);
-        }
+        console.table(res)
+        // for (let i = 0; i < res.length; i++) {
+        //     console.log(res[i].title);
+        // }
         tracker();
     })
 };
@@ -92,13 +92,13 @@ function viewRoles() {
 function viewEmps() {
     connection.query('SELECT * FROM employee', function (err, res) {
         if (err) throw err;
-        // console.log(res);
-        for (let i = 0; i < res.length; i++) {
-            empNamesList = (`${res[i].firstName} ${res[i].lastName}`);
-            empIDsList = (res[i].id);
-            console.log(empNamesList);
-            console.log(empIDsList)
-        }
+        console.table(res);
+        // for (let i = 0; i < res.length; i++) {
+        //     empNamesList = (`${res[i].firstName} ${res[i].lastName}`);
+        //     // empIDsList = (res[i].id);
+        //     console.log(empNamesList);
+        //     // console.log(empIDsList);
+        // }
         tracker();
     })
 };
@@ -220,20 +220,15 @@ function createEmp() {
                         choices: mgrArray
                     }
                 ]).then(function (response) {
-                    // Sets the value of the last question in the Inquirer to a variable
-                    const res_NewEmpMgr = response.newEmpMgr;
-                    // console.log(res_NewEmpMgr);
+                    const mgrFullNameArr = response.newEmpMgr.split(' ');
+                    const mgrFN = mgrFullNameArr[0];
+                    const mgrLN = mgrFullNameArr[1];
 
-                    // Slices the above variable at the first white space, indicating the first name, and sets that value (the new employee's MGR's first name) to a new variable
-                    const newEmpMgrFN = res_NewEmpMgr.substr(0, res_NewEmpMgr.indexOf(' '));
-                    // console.log(newEmpMgrFN);
-
-                    // Trying to reverse search for the new employee's MGR's ID# using the above variable 
-                    connection.query('SELECT roleID FROM employee WHERE employee.firstName = ?', [newEmpMgrFN], function (err, answer) {
-                        // console.log(answer);
+                    // Pulling the new employee's manager's ID from the given names above
+                    connection.query('SELECT roleID FROM employee WHERE employee.firstName = ? AND employee.lastName = ?', [mgrFN, mgrLN], function (err, answer) {
+                        if (err) throw err;
                         const newEmpMgrID = answer[0].roleID;
-                        // console.log(newEmpMgrID);
-
+                        console.log(newEmpMgrID);
 
                         // Pulling the ID of the new role the employee is getting updated into. 
                         connection.query('SELECT id FROM empRole WHERE empRole.title = ?', [response.newEmpTitle], function (err, res) {
@@ -293,32 +288,31 @@ function updateRole() {
                         choices: empRoleArray
                     }
                 ]).then(function (answer) {
-                    console.log(answer)
-                    const fullName = answer.empName;
-
-                    // Splitting the first name to use in the UPDATE query.
-                    const ansEmpFN = answer.empName.substr(0, answer.empName.indexOf(' '));
-                    // console.log(ansEmpFN);
+                    // Getting the name of the employee broken down
+                    const fullNameArr = answer.empName.split(' ');
+                    const empFN = fullNameArr[0];
+                    const empLN = fullNameArr[1];
 
                     // Pulling the ID of the new role the employee is getting updated into. 
                     connection.query('SELECT id FROM empRole WHERE empRole.title = ?', [answer.empRole], function (err, res) {
-                        // console.log(res[0].id);
+                        const newRoleID = res[0].id;
 
                         // This is the query that actually updates the database
-                        connection.query("UPDATE employee SET ? WHERE ?",
+                        connection.query("UPDATE employee SET ? WHERE ? AND ?",
                             [
                                 {
-                                    roleID: res[0].id
-                                    // match ID to the correct job title?
+                                    roleID: newRoleID
                                 },
                                 {
-                                    firstName: ansEmpFN
-                                    // firstNames
+                                    firstName: empFN
+                                },
+                                {
+                                    lastName: empLN
                                 }
                             ],
                             function (err, res) {
                                 if (err) throw err;
-                                console.log(`----------\n${fullName}'s role has been updated!\n----------`);
+                                console.log(`----------\n${answer.empName}'s role has been updated!\n----------`);
 
                                 tracker();
                             }
@@ -332,11 +326,50 @@ function updateRole() {
     })
 }
 
-function updateManager() {
+function deleteEmp() {
+    // This query allows us to pull the list of employee names for the chocies array in the inquirer
+    connection.query('SELECT * FROM employee', function (err, res) {
+        if (err) throw err;
+        // console.log(res);
 
+        // This loops through res exactly like a for loop and returns the first and last name of the employees.
+        let empArray = res.map((element, index, array) => {
+            return `${element.firstName} ${element.lastName}`
+        });
 
+        inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    message: `What employee's profile do you want to delete?`,
+                    name: 'empName',
+                    choices: empArray
+                }
+            ]).then(function (res) {
+                // Getting the name of the employee broken down
+                const fullNameArr = res.empName.split(' ');
+                const empFN = fullNameArr[0];
+                const empLN = fullNameArr[1];
 
-    tracker();
+                // Pulling the ID from the given names above
+                connection.query('SELECT id FROM employee WHERE employee.firstName = ? AND employee.lastName = ?', [empFN, empLN], function (err, res) {
+                    // console.log(res[0].id);
+                    const empID = res[0].id;
+
+                    connection.query("DELETE FROM employee WHERE ?",
+                        {
+                            id: empID
+                        },
+                        function (err, response) {
+                            if (err) throw err;
+                            console.log(`----------\n${empFN} ${empLN} has been deleted!\n----------`);
+                            tracker();
+                        }
+                    );
+                })
+            })
+
+    });
 };
 
 // ------------END OF UPDATE FUNCTIONS---------------------------
